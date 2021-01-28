@@ -82,7 +82,7 @@ class ConfigureViewController: NSViewController, NSTextFieldDelegate {
         DefaultsManager.shared.usingLocation = useLocationToggleCheckBox.state == .on
         DefaultsManager.shared.showHumidity = showHumidityToggleCheckBox.state == .on
         (NSApplication.shared.delegate as? AppDelegate)?.getWeather(nil)
-
-        view.window?.close()
+        // close the popover
+        (NSApplication.shared.delegate as? AppDelegate)?.togglePopover(sender)
     }
 }
