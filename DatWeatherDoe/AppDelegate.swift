@@ -8,6 +8,7 @@
 
 import Cocoa
 import CoreLocation
+import LaunchAtLogin
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, CLLocationManagerDelegate {
@@ -23,6 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, CLLocationManagerDelegate {
     private var weatherTimer: Timer?
     private var currentLocation: CLLocationCoordinate2D?
     private var eventMonitor: EventMonitor?
+    private let startAtLoginItem = NSMenuItem(title: "Start at login", action: #selector(toggleStartAtLogin), keyEquivalent: "L")
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Location
@@ -37,6 +39,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, CLLocationManagerDelegate {
         menu.addItem(withTitle: "Refresh", action: #selector(getWeather), keyEquivalent: "R")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Configure", action: #selector(togglePopover), keyEquivalent: "C")
+        startAtLoginItem.state = LaunchAtLogin.isEnabled ? .on : .off
+        menu.addItem(startAtLoginItem)
         menu.addItem(withTitle: "Quit", action: #selector(terminate), keyEquivalent: "q")
 
         statusItem.menu = menu
@@ -70,6 +74,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, CLLocationManagerDelegate {
             repeats: true,
             block: { [weak self] _ in self?.getLocation() }
         )
+    }
+
+    @objc func toggleStartAtLogin(_ sender: AnyObject?) {
+        LaunchAtLogin.isEnabled = !LaunchAtLogin.isEnabled
+        startAtLoginItem.state = LaunchAtLogin.isEnabled ? .on : .off
     }
 
     @objc func togglePopover(_ sender: AnyObject?) {
